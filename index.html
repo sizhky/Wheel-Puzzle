@@ -12,8 +12,41 @@
 		<p> Just a regular web page, but with a canvas element.</p>
 		<canvas id="game" width="640" height="480"> Canvas goes here! </canvas>
 		<script>
-		// This is where the code will go
-		console.log('testing!');
+			// Ideally, this should be outside, but it requires to be served if so (because ob, if browsers let web-pages can access files in the filesystem, that is very dangerous, but some readymade servers are already there, and github hosting will take care of it even without us thinking, so i won't bother), i didn't want to do that, we can do that later.
+
+			// this is how you access any element, by its id tag
+			var canvas = document.getElementById('game');
+
+			// this is how we get a 'context' to draw with, basically it gives us
+			// set of functions accessible by ctx.whatever, which are nothing but
+			// our good old opengl geometric primitives, but much simpler
+			var ctx    = canvas.getContext('2d');
+
+			// I'm drawing a circle, just to show the idea, we will handle the graphics part of it later, it's better to do the mechanics first, gui is just an interface we can add/change/whatever later
+			var draw_wheel = function() {
+				ctx.fillStyle   = "gold";
+				ctx.lineWidth   = 1;
+				ctx.beginPath();
+				ctx.arc(canvas.width/2, canvas.height/2, 120, 0, 2 * Math.PI);
+				ctx.closePath();
+				ctx.fill();
+			}
+			draw_wheel();
+
+			// As i said, the drawing part of it, we can always handle later at leisure. How we'll actually test our code, will be using console.log in a browser, just putting ctrl+shift+i will show it, people use it to debug, as you might know.
+			console.log('The code reached here, of that we are sure.');
+
+			// So let's start by thinking of a simple data representation of what our game translates to. The only information is that there are some n spokes, each can be in two states, out or in. This kinda directly translates to an array, very conveniently. Something like [0, 1, 1, 0, 1], ones being spokes are out, and zeroes meaning spokes are in. The player can only input one array index, and that will make some zero, and others one, according to a hidden rule. Already, we can make a simple version of the game using only text-outputs, i think..
+			var curr_spoke_state = [0, 1, 1, 0, 1]
+
+			var rule1 = function(spoke_state) {
+				// Change spoke state somehow
+				// Ob, these will change by level... We can store anything in an array, even functions, so to prevent repeating a hundred times, we can invent an internal language of some sort, to convey our rules, something like a 2d matrix, each row representing ... Well you get the point
+			}
+
+			// So next steps are just to figure out mouse input (i did keyboard ones before, there is an 'event-based' pattern, but easy enough to write)
+			// We'll do this somehow, soon
+
 		</script>
 	</body>
 </html>
