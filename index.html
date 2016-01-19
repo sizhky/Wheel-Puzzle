@@ -21,6 +21,50 @@
 			// set of functions accessible by ctx.whatever, which are nothing but
 			// our good old opengl geometric primitives, but much simpler
 			var ctx    = canvas.getContext('2d');
+			var centX = canvas.width/2;
+			var centY = canvas.height/2;
+			var r = 250;
+			var r1 = 180;
+			function degToRad(theta){
+				return Math.PI*theta/180;
+			}
+
+			
+
+			
+			// So let's start by thinking of a simple data representation of what our game translates to. The only information is that there are some n spokes, each can be in two states, out or in. This kinda directly translates to an array, very conveniently. Something like [0, 1, 1, 0, 1], ones being spokes are out, and zeroes meaning spokes are in. The player can only input one array index, and that will make some zero, and others one, according to a hidden rule. Already, we can make a simple version of the game using only text-outputs, i think..
+			var curr_spoke_state = [0, 1, 1, 0, 1, 1]
+
+
+			var rule1 = function(spoke_state) {
+				// Change spoke state somehow
+				// Ob, these will change by level... We can store anything in an array, even functions, so to prevent repeating a hundred times, we can invent an internal language of some sort, to convey our rules, something like a 2d matrix, each row representing ... Well you get the point
+
+				//we could have a matrix. 6x6 matrix in this case.
+				//diag elements are 1, and elem [i,j] will be an integer say 1, 0 or -1... 0 implies ith spoke has no effect on jth. 1 implies...
+				//toggle, i.e., modifying ith spoke WILL modify jth irrespective of i's, j's positions. -1 could imply a conditional toggle like if I push in ith spoke, then jth spoke will be pushed in along with it, but pulling i won't affect j. And so on...
+			}
+
+			// So next steps are just to figure out mouse input (i did keyboard ones before, there is an 'event-based' pattern, but easy enough to write)
+			// We'll do this somehow, soon
+
+			// Drawing spokes here.
+			function draw_line(x, y){
+				ctx.lineWidth = 40; //thickness
+				ctx.strokeStyle = "red";
+				ctx.beginPath();
+				ctx.moveTo(centX,centY);
+				ctx.lineTo(x,y);
+				ctx.stroke();
+			}
+			for (i = 0; i < 6; i++) { 
+				if(curr_spoke_state[i] == 0){
+	    			draw_line(centX+r1*Math.cos(degToRad(60*(i))), centY+r1*Math.sin(degToRad(60*(i))));
+	    		}
+	    		else{
+	    			draw_line(centX+r*Math.cos(degToRad(60*(i))), centY+r*Math.sin(degToRad(60*(i))));
+    			}
+			}
 
 			// I'm drawing a circle, just to show the idea, we will handle the graphics part of it later, it's better to do the mechanics first, gui is just an interface we can add/change/whatever later
 			var draw_wheel = function() {
@@ -33,22 +77,10 @@
 			}
 			draw_wheel();
 
-			ctx.rect(20,20,150,100);
-			ctx.stroke();
+			
 
 			// As i said, the drawing part of it, we can always handle later at leisure. How we'll actually test our code, will be using console.log in a browser, just putting ctrl+shift+i will show it, people use it to debug, as you might know.
 			console.log('The code reached here, of that we are sure.');
-
-			// So let's start by thinking of a simple data representation of what our game translates to. The only information is that there are some n spokes, each can be in two states, out or in. This kinda directly translates to an array, very conveniently. Something like [0, 1, 1, 0, 1], ones being spokes are out, and zeroes meaning spokes are in. The player can only input one array index, and that will make some zero, and others one, according to a hidden rule. Already, we can make a simple version of the game using only text-outputs, i think..
-			var curr_spoke_state = [0, 1, 1, 0, 1]
-
-			var rule1 = function(spoke_state) {
-				// Change spoke state somehow
-				// Ob, these will change by level... We can store anything in an array, even functions, so to prevent repeating a hundred times, we can invent an internal language of some sort, to convey our rules, something like a 2d matrix, each row representing ... Well you get the point
-			}
-
-			// So next steps are just to figure out mouse input (i did keyboard ones before, there is an 'event-based' pattern, but easy enough to write)
-			// We'll do this somehow, soon
 
 		</script>
 	</body>
