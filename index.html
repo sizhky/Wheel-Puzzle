@@ -22,7 +22,15 @@
 
 			var rule1 = function(spoke_state) { 
 				// TODO: change spoke state according to rules
-
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				return spoke_state;
 				// we could have a matrix. 6x6 matrix in this case.
 				// diag elements are 1, and elem [i,j] will be an integer say 1, 0 or -1... 
 				//  0 implies ith spoke has no effect on jth. 
@@ -32,7 +40,7 @@
 			}
 
 			function draw_line(x, y){
-				ctx.lineWidth = 40; //thickness
+				ctx.lineWidth = 600/num_spokes; //thickness
 				ctx.strokeStyle = "red";
 				ctx.beginPath();
 				ctx.moveTo(centX, centY);
@@ -40,11 +48,10 @@
 				ctx.stroke();
 			}
 
-			var draw_spokes = function (spokes_state) {
-				num_spokes = spokes_state.length
-				for (i = 0; i < num_spokes; i++) { // I take it back, for loop is easiest here
-					r = spokes_state[i] === 1 ? 250 : 180 
-					draw_line(centX + r * Math.cos(i * 2 * Math.PI / num_spokes ), centY + r * Math.sin(i * 2 * Math.PI / num_spokes))
+			var draw_spokes = function (spoke_state) {
+				for (i = 0; i < num_spokes; i++) {
+					r = spoke_state[i] === 1 ? 250 : 180
+					draw_line(centX + r * Math.cos(i * 2 * Math.PI / num_spokes ), centY - r * Math.sin(i * 2 * Math.PI / num_spokes))
 				}
 			}
 
@@ -56,15 +63,22 @@
 				ctx.closePath();
 				ctx.fill();
 			}
+			
 
-			draw_frame = function(curr_spoke_state) { // Grand draw at the end to call everything else
+			draw_frame = function() { // Grand draw at the end to call everything else
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				draw_spokes(curr_spoke_state);
 				draw_wheel();
 				// Animation logic etc. goes here, will have to refer back to mdn breakout tutorial
+				console.log(curr_spoke_state)
+				curr_spoke_state = rule1(curr_spoke_state);		
 			}
 
-			var curr_spoke_state = [0, 1, 1, 0, 0, 1, 0, 1, 0, 1]
-			draw_frame(curr_spoke_state);
+			var curr_spoke_state = Array(200).fill(1); 
+			//var curr_spoke_state = [0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0];
+			num_spokes = curr_spoke_state.length;
+			draw_frame();
+			setInterval(draw_frame, 1);
 
 			// So next steps are just to figure out mouse input 
 		</script>
