@@ -19,17 +19,29 @@
 			var centX = canvas.width/2
 			var centY = canvas.height/2
 			
-
+			prev_state = []
 			var rule1 = function(spoke_state) { 
 				// TODO: change spoke state according to rules
+				prev_state = spoke_state; //we need a snap of wheel's previous position to compare with current state so as to recalculate
 				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+ 				/*
+
+ 				update = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0], [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 0, 0, 1]]
+ 				for(i = num_spokes; i > 0; --i){
+ 					if(prev_state[i] != spoke_state[i]){
+ 						for(j = num_spokes; j > 0; --j{
+							if(update[i][j] == 1){
+ 								spoke_state[j] = 1 - spoke_state[j];
+ 							}
+ 							if(update[i][j] == -1{
+								//do something else...
+ 							}
+ 						}
+ 					}
+ 				}
+
+ 				*/
+ 				
 				return spoke_state;
 				// we could have a matrix. 6x6 matrix in this case.
 				// diag elements are 1, and elem [i,j] will be an integer say 1, 0 or -1... 
@@ -63,22 +75,27 @@
 				ctx.closePath();
 				ctx.fill();
 			}
-			
+
+			function mouse_event (){
+				//I click a spoke and the state should toggle like...
+				//curr_spoke_state[clickedSpoke] = 1 - curr_spoke_state[clickedSpoke]
+			}
 
 			draw_frame = function() { // Grand draw at the end to call everything else
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				draw_spokes(curr_spoke_state);
 				draw_wheel();
 				// Animation logic etc. goes here, will have to refer back to mdn breakout tutorial
-				console.log(curr_spoke_state)
+				//console.log(curr_spoke_state)
 				curr_spoke_state = rule1(curr_spoke_state);		
 			}
 
-			var curr_spoke_state = Array(200).fill(1); 
+			var curr_spoke_state = Array(6).fill(0);
 			//var curr_spoke_state = [0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0];
 			num_spokes = curr_spoke_state.length;
 			draw_frame();
-			setInterval(draw_frame, 1);
+			setInterval(draw_frame, 122); //Currently updating every 122 milliseconds, we need to change this to 'update on every mouse click read'
+			//mouse_event();
 
 			// So next steps are just to figure out mouse input 
 		</script>
