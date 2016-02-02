@@ -20,12 +20,13 @@
 			var centY = canvas.height/2
 			
 			prev_state = []
-			var rule1 = function(spoke_state) { 
+			var rule1 = function(spoke_state, spoke_to_be_updated) { 
 				// TODO: change spoke state according to rules
 				prev_state = spoke_state; //we need a snap of wheel's previous position to compare with current state so as to recalculate
-				spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				//spoke_state[Math.floor((Math.random() * num_spokes) + 1)] = 1 - spoke_state[Math.floor((Math.random() * num_spokes) + 1)];
+				curr_spoke_state[spoke_to_be_updated] = 1 - curr_spoke_state[spoke_to_be_updated] //Simple Toggle
  				/*
-
+				
  				update = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0], [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 0, 0, 1]]
  				for(i = num_spokes; i > 0; --i){
  					if(prev_state[i] != spoke_state[i]){
@@ -63,7 +64,8 @@
 			var draw_spokes = function (spoke_state) {
 				for (i = 0; i < num_spokes; i++) {
 					r = spoke_state[i] === 1 ? 250 : 180
-					draw_line(centX + r * Math.cos(i * 2 * Math.PI / num_spokes ), centY - r * Math.sin(i * 2 * Math.PI / num_spokes))
+					k = 30*Math.PI/180
+					draw_line(centX + r * Math.cos((Math.PI+i * 2 * Math.PI) / num_spokes ), centY - r * Math.sin((Math.PI+i * 2 * Math.PI) / num_spokes))
 				}
 			}
 
@@ -90,14 +92,40 @@
 				curr_spoke_state = rule1(curr_spoke_state);		
 			}
 
-			var curr_spoke_state = Array(6).fill(0);
+			var curr_spoke_state = Array(22).fill(0);
 			//var curr_spoke_state = [0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0];
 			num_spokes = curr_spoke_state.length;
 			draw_frame();
-			setInterval(draw_frame, 122); //Currently updating every 122 milliseconds, we need to change this to 'update on every mouse click read'
+			setInterval(draw_frame, 10); //Currently updating every 122 milliseconds, we need to change this to 'update on every mouse click read'
 			//mouse_event();
 
 			// So next steps are just to figure out mouse input 
+			canvas.onclick = function(e) {
+
+			    // use pageX and pageY to get the mouse position
+			    // relative to the browser window
+
+			    var mouse = {
+			        m: e.pageX - canvas.offsetLeft,
+			        n: e.pageY - canvas.offsetTop
+			    }
+			    m = mouse.m;
+			    n = mouse.n;
+			    // console.log(Math.sqrt(Math.pow((m-centX),2)+Math.pow((n-centY),2)))
+			    //ctx.arc(centX, centY, 120, 0, 2 * Math.PI);
+			    if(Math.sqrt(Math.pow((m-centX),2)+Math.pow((n-centY),2))<170){
+			    	angle = Math.atan((centY-n)/(m-centX));
+			    	angle = 180*angle/Math.PI;
+			    	if((m-centX) < 0){angle = angle + 180}
+			    	if((centY-n) < 0 && (m-centX) > 0){angle = angle+360}
+			    	spoke_to_be_updated = Math.floor((angle)*num_spokes/360)
+			    	console.log(spoke_to_be_updated);
+			    	rule1(curr_spoke_state, spoke_to_be_updated)
+			    }
+			    // now you have local coordinates,
+			    // which consider a (0,0) origin at the
+			    // top-left of canvas element
+			};
 		</script>
 	</body>
 </html>
