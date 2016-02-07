@@ -4,49 +4,124 @@
 		<meta charset="utf-8"/>
 		<title> Sailor wheel puzzle </title>
 		<style> 
-			* { padding: 0; margin: 0; }
+			* { padding: 0; margin: 0; text-align: center;}
 			canvas { background: #eee; display: block; margin: 0 auto; }
 		</style> 
 	</head>
 	<body>
-		<p> Just a regular web page, but with a canvas element.</p>
+		<H1> The sun is too lazy to shine today. </H1>
+		<H1>Help it by expanding it's rays. Click on the rays and spread the love. </H1>
+		<H1>Only, it ain't that easy.</H1>
 		<canvas id="game" width="640" height="480"> Canvas goes here! </canvas>
 		<script>
-			// Ideally, this should be outside, but it requires to be served if so (because ob, if browsers let web-pages can access files in the filesystem, that is very dangerous, but some readymade servers are already there, and github hosting will take care of it even without us thinking, so i won't bother), i didn't want to do that, we can do that later.
 
-			// this is how you access any element, by its id tag
 			var canvas = document.getElementById('game');
-
-			// this is how we get a 'context' to draw with, basically it gives us
-			// set of functions accessible by ctx.whatever, which are nothing but
-			// our good old opengl geometric primitives, but much simpler
 			var ctx    = canvas.getContext('2d');
 
-			// I'm drawing a circle, just to show the idea, we will handle the graphics part of it later, it's better to do the mechanics first, gui is just an interface we can add/change/whatever later
+			var centX = canvas.width/2
+			var centY = canvas.height/2
+			
+			prev_state = []
+
+			var rule1 = function(spoke_state, spoke_to_be_updated) {
+				curr_spoke_state[spoke_to_be_updated] = 1 - curr_spoke_state[spoke_to_be_updated] 
+ 				for(i = num_spokes-1; i >= 0; --i){
+ 					if(spokeMatrix[spoke_to_be_updated][i] == 1){
+ 						curr_spoke_state[i] = 1 - curr_spoke_state[i]
+ 					}
+ 				}
+ 				i = 0;
+				//console.log(curr_spoke_state);
+				return curr_spoke_state;
+			}
+
+			function draw_line(x, y){
+				ctx.lineWidth = 600/num_spokes; //thickness
+				ctx.strokeStyle = "red";
+				ctx.beginPath();
+				ctx.moveTo(centX, centY);
+				ctx.lineTo(x,y);
+				ctx.stroke();
+			}
+
+			var draw_spokes = function (spoke_state) {
+				for (i = 0; i < num_spokes; i++) {
+					r = spoke_state[i] === 1 ? 250 : 180
+					k = 30*Math.PI/180
+					draw_line(centX + r * Math.cos((Math.PI + i * 2 * Math.PI) / num_spokes ), centY - r * Math.sin((Math.PI + i * 2 * Math.PI) / num_spokes))
+				}
+			}
+
 			var draw_wheel = function() {
 				ctx.fillStyle   = "gold";
 				ctx.lineWidth   = 1;
 				ctx.beginPath();
-				ctx.arc(canvas.width/2, canvas.height/2, 120, 0, 2 * Math.PI);
+				ctx.arc(centX, centY, 120, 0, 2 * Math.PI);
 				ctx.closePath();
 				ctx.fill();
 			}
-			draw_wheel();
 
-			// As i said, the drawing part of it, we can always handle later at leisure. How we'll actually test our code, will be using console.log in a browser, just putting ctrl+shift+i will show it, people use it to debug, as you might know.
-			console.log('The code reached here, of that we are sure.');
 
-			// So let's start by thinking of a simple data representation of what our game translates to. The only information is that there are some n spokes, each can be in two states, out or in. This kinda directly translates to an array, very conveniently. Something like [0, 1, 1, 0, 1], ones being spokes are out, and zeroes meaning spokes are in. The player can only input one array index, and that will make some zero, and others one, according to a hidden rule. Already, we can make a simple version of the game using only text-outputs, i think..
-			var curr_spoke_state = [0, 1, 1, 0, 1]
+			draw_frame = function() { // Grand draw at the end to call everything else
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				draw_spokes(curr_spoke_state);
+				draw_wheel();
+				i=0
+		    	while(curr_spoke_state[i] == 1){
+ 					++i
+ 					if(i == num_spokes){
+ 						ftw()
+ 					}
+ 				}
 
-			var rule1 = function(spoke_state) {
-				// Change spoke state somehow
-				// Ob, these will change by level... We can store anything in an array, even functions, so to prevent repeating a hundred times, we can invent an internal language of some sort, to convey our rules, something like a 2d matrix, each row representing ... Well you get the point
+ 				//yeah animations. Need some trippy animation to boot up, mouse hovering and spoke updating	
 			}
 
-			// So next steps are just to figure out mouse input (i did keyboard ones before, there is an 'event-based' pattern, but easy enough to write)
-			// We'll do this somehow, soon
+			num_spokes = 4;
+			var curr_spoke_state = Array(num_spokes).fill(0); //current state of our rays.
+			initialize()
+			function initialize(){
+				curr_spoke_state = Array(num_spokes).fill(0);
+				num_spokes = curr_spoke_state.length;
+				spokeMatrix = new Array(num_spokes); //spokeMatrix is everything. It defines the level
+				for(i = 0; i < num_spokes; ++i) spokeMatrix[i] = Array(num_spokes).fill(0);
+				for(i = 0; i < num_spokes; ++i){
+					for(j = 0; j < num_spokes; ++j){
+						if(i == j){spokeMatrix[i][j] = 0}
+						else{spokeMatrix[i][j] = Math.random() > 0.5 ? 1 : 0} //And I'm randomizing it. Obvious flaw is obvious
+					}
+					console.log(spokeMatrix[i]) //printing the matrix if you want to do some fancy math outside the game
+												//Like completeness and uniqueness. AFAIK completeness is more important from a user POV
+				}
+				
+			}
+			function ftw(){ //Code reaches this place when you finished tha level
+				window.alert("WOOOOOOOT. You've fired up the sun... for now")
+				++num_spokes //going to next level lol
+				mouseClicks = 0;
+				initialize();
+			}
+			draw_frame();
+			setInterval(draw_frame, 100); 
+			mouseClicks = 0;
+			canvas.onclick = function(e) { //even I don't know how this function works :-/
 
+			    ++mouseClicks //maybe do some analytics IDK...
+			    var mouse = {
+			        m: e.pageX - canvas.offsetLeft,
+			        n: e.pageY - canvas.offsetTop
+			    }
+			    m = mouse.m;
+			    n = mouse.n; //mouse coordinates
+			    if(Math.sqrt(Math.pow((m-centX),2)+Math.pow((n-centY),2))<250){
+			    	angle = Math.atan((centY-n)/(m-centX));
+			    	angle = 180*angle/Math.PI;
+			    	if((m-centX) < 0){angle = angle + 180}
+			    	if((centY-n) < 0 && (m-centX) > 0){angle = angle+360}
+			    	spoke_to_be_updated = Math.floor((angle)*num_spokes/360)
+			    	rule1(curr_spoke_state, spoke_to_be_updated)
+			    }
+			};
 		</script>
 	</body>
 </html>
