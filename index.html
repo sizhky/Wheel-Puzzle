@@ -24,7 +24,7 @@
 			prev_state = []
 
 			var rule1 = function(spoke_state, spoke_to_be_updated) {
-				curr_spoke_state[spoke_to_be_updated] = 1 - curr_spoke_state[spoke_to_be_updated] 
+				// curr_spoke_state[spoke_to_be_updated] = 1 - curr_spoke_state[spoke_to_be_updated] 
  				for(i = num_spokes-1; i >= 0; --i){
  					if(spokeMatrix[spoke_to_be_updated][i] == 1){
  						curr_spoke_state[i] = 1 - curr_spoke_state[i]
@@ -87,7 +87,7 @@
 				for(i = 0; i < num_spokes; ++i) spokeMatrix[i] = Array(num_spokes).fill(0);
 				for(i = 0; i < num_spokes; ++i){
 					for(j = 0; j < num_spokes; ++j){
-						if(i == j){spokeMatrix[i][j] = 0}
+						if(i == j){spokeMatrix[i][j] = 1}
 						else{spokeMatrix[i][j] = Math.random() > 0.5 ? 1 : 0} //And I'm randomizing it. Obvious flaw is obvious
 					}
 					console.log(spokeMatrix[i]) //printing the matrix if you want to do some fancy math outside the game
@@ -96,14 +96,13 @@
 				
 			}
 			function ftw(){ //Code reaches this place when you finished tha level
-				sleep(4000);
-				window.alert("WOOOOOOOT. You've fired up the sun... for now")
 				++num_spokes //going to next level lol
 				mouseClicks = 0;
 				initialize();
+				// window.alert("WOOOOOOOT. You've fired up the sun... for now")
 			}
 			draw_frame();
-			setInterval(draw_frame, 100); 
+			setInterval(draw_frame, 20 ); 
 			mouseClicks = 0;
 			canvas.onclick = function(e) { //even I don't know how this function works :-/
 
